@@ -1,27 +1,32 @@
 #!/usr/bin/env bash
 
-rm -rf tmp
+rm -rf lib
 rm setup.cfg
 
 # install modules to temporary dir
-mkdir tmp
-pip install httplib2 -t ./tmp
-pip install jsonpickle -t ./tmp
-pip install oauth2client -t ./tmp
-pip install google-api-python-client -t ./tmp
-pip install datetime -t ./tmp
-pip install lxml -t ./tmp
+mkdir lib
+pip install httplib2 \
+            jsonpickle \
+            oauth2client \
+            google-api-python-client \
+            datetime \
+            lxml \
+            -t ./lib
 
-# required for aws lambda deployment package
+# create setup.cfg
 echo '[install]' >> setup.cfg
 echo 'prefix=' >> setup.cfg
 
-# bundle everything
-cd tmp && zip -r ../bundle.zip * && cd .. 
+# zip modules
+cd lib
+zip -r ../bundle.zip *
+cd .. 
+
+# zip everything else
 zip -r bundle.zip setup.cfg
 zip -r bundle.zip *.py
 zip -r bundle.zip credentials.json
 
 # clean up
-rm -rf tmp
+rm -rf lib
 rm setup.cfg
