@@ -1,6 +1,6 @@
 import httplib2
 
-# google python api: http://bit.ly/2x79GgQ
+# google-api-python-client: http://bit.ly/2x79GgQ
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 
@@ -13,7 +13,11 @@ def init_service(credentials):
                    'version=v4')
 
   # docs: http://bit.ly/2yipSk8
-  return build('sheets', 'v4', http=http, discoveryServiceUrl=discovery_url)
+  return build('sheets', 
+               'v4', 
+               http=http, 
+               discoveryServiceUrl=discovery_url, 
+               cache_discovery=False)
 
 def update(a1range, values, credentials):
   service = init_service(credentials)
