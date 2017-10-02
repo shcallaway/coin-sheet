@@ -1,7 +1,7 @@
 # oauth 2 for python: http://bit.ly/2x7qyEg
 # example implementation: http://bit.ly/2vbwMH0
 
-import os, re
+import os, re, warnings
 
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.file import Storage
@@ -26,15 +26,20 @@ def init_flow():
                              redirect_uri=REDIRECT_URI)
 
 def get_credentials( ):
-  if not os.path.exists(file):
-    open(file, 'w')
+  # allows me to catch 'no such file' warning
+  warnings.filterwarnings('error')
 
-  storage = Storage(file)
-  credentials = storage.get()
+  credentials = None
 
+  try:
+    storage = Storage(file)
+    credentials = storage.get()
+
+  except Warning:
+    print 'No such file or dir: ' + file
+
+  # get new auth code and token
   if not credentials or credentials.invalid:
-    print 'Credentials missing.'
-
     flow = init_flow()
 
     print 'Visit this URL in your web browser:\n'
