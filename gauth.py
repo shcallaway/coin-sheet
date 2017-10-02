@@ -29,27 +29,32 @@ def get_credentials( ):
   # allows me to catch 'no such file' warning
   warnings.filterwarnings('error')
 
-  credentials = None
-
   try:
+    print 'Getting access tokens from storage.'
     storage = Storage(file)
     credentials = storage.get()
 
   except Warning:
     print 'No such file or dir: ' + file
+    credentials = None
 
   # get new auth code and token
   if not credentials or credentials.invalid:
     flow = init_flow()
 
-    print 'Visit this URL in your web browser:\n'
-    print flow.step1_get_authorize_url()
+    print 'Visit this URL in your web browser:'
+
+    # make url blue
+    white = '\033[0m'
+    blue = '\033[34m'
+
+    print blue + flow.step1_get_authorize_url() + white
     
-    code = raw_input('\nEnter your new authorization code here: ')
+    code = raw_input('Enter your new authorization code here: ')
 
     credentials = flow.step2_exchange(code=code)
 
-    print 'Writing credentials to local file: ' + file
+    print 'Writing access tokens to local file: ' + file
     storage = Storage(file)
     storage.put(credentials)
 
