@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-rm -rf lib
-rm setup.cfg
+CREDENTIALS=credentials.json
+SETUP=setup.cfg
+MODULES=./lib
 
-# install modules to temporary dir
+rm -rf $MODULES
+rm $SETUP
+
+# install modules
 mkdir lib
 pip install httplib2 \
             jsonpickle \
@@ -11,22 +15,22 @@ pip install httplib2 \
             google-api-python-client \
             datetime \
             lxml \
-            -t ./lib
+            -t $MODULES
 
 # create setup.cfg
-echo '[install]' >> setup.cfg
-echo 'prefix=' >> setup.cfg
+echo '[install]' >> $SETUP
+echo 'prefix=' >> $SETUP
 
-# zip modules
-cd lib
-zip -r ../bundle.zip *
-cd .. 
+# make sure permissions are good
+chmod u=rw,g=r,o=r $CREDENTIALS
 
-# zip everything else
-zip -r bundle.zip setup.cfg
+# zip everything
+cd lib && zip -r ../bundle.zip * && cd .. 
+
+zip -r bundle.zip $SETUP
 zip -r bundle.zip *.py
-zip -r bundle.zip credentials.json
+zip -r bundle.zip $CREDENTIALS
 
 # clean up
 rm -rf lib
-rm setup.cfg
+rm $SETUP
